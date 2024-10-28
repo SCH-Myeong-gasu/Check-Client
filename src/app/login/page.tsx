@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Button, Input, VStack, Text, Select } from '@chakra-ui/react';
-import Navbar from "../../components/layout/nav/Index";
+import Navbar from "../../components/layout/nav";
 
 export default function LoginPage() {
   const router = useRouter();

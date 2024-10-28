@@ -1,14 +1,29 @@
 // app/layout.tsx
-import { Providers } from './providers'
+import { Providers } from './providers';
+import localFont from 'next/font/local';
 
-export default function RootLayout({
-                                     children,
-                                   }: {
+import './globals.css';
+
+const pretendard = localFont({
+  src: './fonts/PretendardVariable.woff2',
+  display: 'swap',
+  weight: '45 920',
+  variable: '--font-pretendard',
+})
+
+export default function RootLayout({children}: {
   children: React.ReactNode,
 }) {
   return (
     <html lang='ko'>
-    <body>
+    <head>
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+      <link rel="manifest" href="/site.webmanifest"/>
+      <title>Adance</title>
+    </head>
+    <body className={`${pretendard.variable} font-pretendard`}>
     <Providers>{children}</Providers>
     </body>
     </html>

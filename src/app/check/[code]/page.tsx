@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {Box, Text, Button, Alert, AlertIcon, Spinner, VStack, Flex, Center} from '@chakra-ui/react';
-import Navbar from "../../../components/layout/nav/Index";
+import Navbar from "../../../components/layout/nav";
 
 interface ParticipationResponse {
   isValid: boolean;

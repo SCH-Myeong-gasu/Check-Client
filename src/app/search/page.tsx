@@ -1,6 +1,5 @@
-import Navbar from "../components/layout/nav";
+import Navbar from "@/components/layout/nav";
 import {Box, Flex, Heading, IconButton, Text} from "@chakra-ui/react";
-// import Footer from "@/components/layout/footer";
 import Link from "next/link";
 import {AiFillHome, AiFillPlusCircle, AiOutlineSearch, AiOutlineSetting} from "react-icons/ai";
 import PageTransition from "@/components/PageTransition";
