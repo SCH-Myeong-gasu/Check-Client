@@ -2,6 +2,7 @@
 import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
 import { AiFillHome, AiOutlineSearch, AiFillPlusCircle, AiOutlineSetting } from 'react-icons/ai'; // react-icons에서 아이콘 가져오기
 import Link from 'next/link';
+import {rgba} from "color2k";
 
 const BottomNav = () => {
   // const { colorMode } = useColorMode();
@@ -19,7 +20,7 @@ const BottomNav = () => {
       borderRight={{ base: "1px", md: 0 }}
       borderTopRightRadius={{ base: "2xl", lg: "0" }}
       borderTopLeftRadius={{ base: "2xl", lg: "0" }}
-      borderColor="#f3f4f4"
+      borderColor={rgba(243, 1244, 245, 1)} // "#f3f4f4"
     >
       <Flex justify="space-around" p={4}>
         <Link href="/" passHref>

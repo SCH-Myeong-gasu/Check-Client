@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// prisma/schema.prisma
+model User {
+  id        Int          @id @default(autoincrement())
+  uuid      String       @unique @default(uuid())
+  username  String
+  email     String       @unique
+  password  String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  events    Event[]      @relation("UserEvents")
+}
+
+model Event {
+  id        Int          @id @default(autoincrement())
+  code      Int          @unique
+  name      String
+  data      Json?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  userUuid  String
+  user      User         @relation("UserEvents", fields: [userUuid], references: [uuid], onDelete: Cascade)
+  checks    Check[]      @relation("EventChecks") // 하나의 Event에 여러 Check가 연결될 수 있도록 설정
+  participants Participant[] // Event에 여러 참여자 등록 가능
+}
+
+model Check {
+  id        Int          @id @default(autoincrement())
+  code      Int          @unique
+  name      String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now())
+  eventId   Int
+  event     Event        @relation("EventChecks", fields: [eventId], references: [code], onDelete: Cascade)
+  // participantChecks ParticipantCheck[] // Check에 대한 각 참여자의 기록을 관리
+}
+
+model Participant {
+  id         Int      @id @default(autoincrement())
+  name       String
+  studentId  String// 학번
+  department String// 학과
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  eventId    Int
+  checkCode  Int
+  event      Event    @relation(fields: [eventId], references: [code], onDelete: Cascade)
+
+  @@unique([name, studentId, department, eventId, checkCode]) // 유니크 제약 조건 추가
+}
+// model Participant {
+//   id        Int          @id @default(autoincrement())
+//   name      String
+//   studentId String       // 학번
+//   department String      // 학과
+//   createdAt DateTime     @default(now())
+//   updatedAt DateTime     @updatedAt
+//   eventId   Int
+//   event     Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+//   checks    ParticipantCheck[] // 각 참여자가 Check 참여 여부를 관리
+//
+//   @@unique([name, studentId, department, eventId]) // 유니크 제약 조건 추가
+// }
+//
+// model ParticipantCheck {
+//   id            Int          @id @default(autoincrement())
+//   participantId Int
+//   checkId       Int
+//   timestamp     DateTime     @default(now()) // 참여 시간 기록
+//   participant   Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
+//   check         Check        @relation(fields: [checkId], references: [id], onDelete: Cascade)
+//
+//   @@unique([participantId, checkId]) // 중복된 기록 방지
+// }
+
+
+
+
+
+// model Post {
+//   id        Int      @id @default(autoincrement())
+//   title     String   @db.VarChar(255)
+//   createdAt DateTime @default(now()) @db.Timestamp(6)
+//   content   String?
+//   published Boolean  @default(false)
+//   authorId  Int
+//   author    User     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+// }
+//
+// model Profile {
+//   id     Int     @id @default(autoincrement())
+//   bio    String?
+//   userId Int     @unique
+//   user   User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+// }
+//
+// model User {
+//   id      Int      @id @default(autoincrement())
+//   name    String?  @db.VarChar(255)
+//   email   String   @unique @db.VarChar(255)
+//   posts   Post[]
+//   profile Profile?
+// }

@@ -1,56 +1,58 @@
+'use client';
+
 import Navbar from "../components/layout/nav";
 import {Box, Flex, Heading, IconButton, Text} from "@chakra-ui/react";
 // import Footer from "@/components/layout/footer";
 import Link from "next/link";
 import {AiFillHome, AiFillPlusCircle, AiOutlineSearch, AiOutlineSetting} from "react-icons/ai";
 import PageTransition from "@/components/PageTransition";
+import {useEffect, useState} from "react";
 
 export default function Home() {
+  
+  const [userData, setUserData] = useState('');
+  
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('/api/login');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        if (data) {
+          setUserData(data); // 사용자 이름을 상태에 설정
+        }
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      }
+    };
+    
+    fetchUserInfo();
+  }, []);
+  
   return (
     <>
       <Navbar/>
       <PageTransition>
-        <Box p={4} pt={20}>
-          <Heading as="h1">안녕하세요, Pretendard!</Heading>
-          <Text>여기에서 Pretendard 폰트가 사용됩니다.</Text>
-        </Box>
+        {userData ? (
+        <>
+          <Box p={4} pt={20}>
+            <Heading>
+              참가중인 이벤트가 있어요!
+            </Heading>
+            <Box rounded={"2xl"} bg={"white"}>
+              {/*<Text>{eventName}</Text>*/}
+            </Box>
+          </Box>
+        </>
+        ) : (
+          <Box p={4} pt={20}>
+            <Heading as="h1">안녕하세요, Pretendard!</Heading>
+            <Text>여기에서 Pretendard 폰트가 사용됩니다.</Text>
+          </Box>
+        )}
       </PageTransition>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
       <nav>
         <Box
           position="fixed"
@@ -86,7 +88,7 @@ export default function Home() {
                   variant="ghost"
                   fontSize="2xl"
                 />
-                <Text fontSize="sm">검색</Text> {/* 텍스트 추가 */}
+                <Text fontSize="sm">이벤트</Text> {/* 텍스트 추가 */}
               </Flex>
             </Link>
             <Link href="/add" passHref>

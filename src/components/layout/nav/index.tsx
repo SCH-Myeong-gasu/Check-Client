@@ -1,11 +1,30 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Box, Flex, Text, Button, Image, Spacer, Link, Center } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  Image,
+  Spacer,
+  Link,
+  Center,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuGroup,
+  Button
+} from '@chakra-ui/react';
+import { FaUserCircle } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [userName, setUserName] = useState('');
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
   
   useEffect(() => {
     const observerTarget = observerRef.current;
@@ -24,12 +43,30 @@ export default function Navbar() {
     };
   }, []);
   
+  // GET 요청으로 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('/api/login');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        if (data.name) {
+          setUserName(data.name); // 사용자 이름을 상태에 설정
+        }
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      }
+    };
+    
+    fetchUserInfo();
+  }, []);
+  
   return (
     <>
-      {/* 감시할 더미 요소 */}
-      <Box ref={observerRef} height="1px" />
+      <Box ref={observerRef} height="1px"/>
       
-      {/* 네비게이션 바 */}
       <Box
         position="fixed"
         width="100%"
@@ -44,37 +81,66 @@ export default function Navbar() {
         shadow={isScrolled ? 'md' : 'none'}
       >
         <Flex align="center" maxW="1200px" mx="auto">
-          {/* 로고 */}
           <Link href="/">
             <Image
               src="/apple-touch-icon.png"
               alt="로고"
-              boxSize="50px"
+              boxSize={{ base: "46px", sm: "50px" }}
               objectFit="contain"
             />
           </Link>
           <Link href="/">
             <Center>
-              <Text fontSize="lg" fontWeight="bold" ml={4} color={"slategray"}>
+              <Text
+                fontSize={{ base: "2xl", sm: "2xl" }}
+                fontWeight="bold"
+                ml={{ base: "6px", sm: 2 }}
+                color="slategray"
+                letterSpacing={{ base: "normal", sm: "wider" }}
+              >
                 Adance
               </Text>
             </Center>
           </Link>
-          <Spacer />
-          
-          {/* 메뉴 */}
-          <Flex>
-            <Link href="/about" mx={4}>
-              <Button variant="ghost" colorScheme="whiteAlpha">
-                About
-              </Button>
+          <Spacer/>
+          {userName ? (
+            <Flex alignItems="center">
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<FaUserCircle />}
+                  variant="ghost"
+                  aria-label="Account options"
+                  color={"rgb(178, 184, 192)"}
+                  fontSize="2xl"
+                  mx={2}
+                />
+                <MenuList color={"rgb(178, 184, 192)"}>
+                  <MenuGroup title={`안녕하세요, ${userName}님!`}>
+                    {/*<MenuItem>{userName || 'My Account'}</MenuItem> /!* 사용자 이름이 없으면 기본값으로 'My Account' 표시 *!/*/}
+                  </MenuGroup>
+                  {/*<MenuItem onClick={() => alert('프로필 보기')}>프로필 보기</MenuItem>*/}
+                  {/*<MenuItem onClick={() => alert('설정')}>설정</MenuItem>*/}
+                  <MenuItem onClick={() => router.push('/logout')}>로그아웃</MenuItem>
+                </MenuList>
+              </Menu>
+            </Flex>
+          ) : (
+            <Link href={"/login"}>
+              <Flex alignItems="center">
+                  <Button
+                    as={IconButton}
+                    icon={<FaUserCircle />}
+                    variant="ghost"
+                    aria-label="Account options"
+                    color={"rgb(178, 184, 192)"}
+                    fontSize="2xl"
+                    mx={2}
+                  />
+              </Flex>
             </Link>
-            <Link href="/login" mx={4}>
-              <Button variant="ghost" colorScheme="whiteAlpha">
-                Login
-              </Button>
-            </Link>
-          </Flex>
+          )}
+
         </Flex>
       </Box>
     </>
