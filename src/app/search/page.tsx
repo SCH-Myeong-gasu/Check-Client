@@ -24,9 +24,9 @@ export default function Home() {
   const [checkData, setCheckData] = useState<CheckData[]>([]);
   const [participantCheckCodes, setParticipantCheckCodes] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const eventId = 39804101; // 특정 이벤트 ID를 하드코딩 (유동적으로 사용할 경우 props나 context 등으로 전달 가능)
+  const eventId = 39804101;
   
-  const [userData, setUserData] = useState('');
+  const [userData, setUserData] = useState<any>('');
   
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -37,7 +37,7 @@ export default function Home() {
         }
         const data = await response.json();
         if (data) {
-          setUserData(data); // 사용자 이름을 상태에 설정
+          setUserData(data);
         }
       } catch (error) {
         console.error('Failed to fetch user info:', error);
@@ -62,12 +62,12 @@ export default function Home() {
     
     const fetchParticipantCheckCodes = async () => {
       try {
-        // 참가자 정보를 가져오기 위해 API 호출
-        const response = await fetch(`/api/participants?eventId=${eventId}&name=${userData.name}&studentId=${userData.studentId}&department=${userData.department}`); // 필요에 따라 적절한 파라미터로 변경
+        const response = await fetch(`/api/participants?eventId=${eventId}&name=${userData.name}&studentId=${userData.studentId}&department=${userData.department}`);
         if (!response.ok) throw new Error('Failed to fetch participant check codes');
         
         const data: ParticipantData[] = await response.json();
-        setParticipantCheckCodes(data.checkCodes);
+        // 수정된 부분: ParticipantData 배열에서 checkCode 값들을 추출하여 설정
+        setParticipantCheckCodes(data.map(participant => participant.checkCode));
       } catch (error) {
         console.error('Failed to fetch participant check codes:', error);
       } finally {
@@ -75,9 +75,11 @@ export default function Home() {
       }
     };
     
-    fetchCheckData();
-    fetchParticipantCheckCodes();
-  }, [eventId]);
+    if (userData) {  // userData가 있을 때만 API 호출
+      fetchCheckData();
+      fetchParticipantCheckCodes();
+    }
+  }, [eventId, userData]);  // userData를 의존성 배열에 추가
   
   if (isLoading) {
     return (
@@ -96,9 +98,9 @@ export default function Home() {
             <Heading>참가 중인 이벤트 확인 리스트</Heading>
             <Box mt={4}>
               {checkData.map((check) => (
-                participantCheckCodes.includes(check.code) ? ( // 체크한 코드가 포함된 경우
+                participantCheckCodes.includes(check.code) ? (
                   <Box key={check.id} p={4} bg="white" mb={4} rounded="2xl" shadow="md">
-                    <Text fontWeight="bold" fontSize="lg">{check.name} (참여함)</Text> {/* 체크한 경우 표시 */}
+                    <Text fontWeight="bold" fontSize="lg">{check.name} (참여함)</Text>
                     <Text fontSize="sm" color="gray.600">Code: {check.code}</Text>
                     <Text fontSize="sm" color="gray.500">Created At: {new Date(check.createdAt).toLocaleString()}</Text>
                   </Box>
@@ -119,7 +121,6 @@ export default function Home() {
         )}
       </PageTransition>
       
-      {/* 하단 네비게이션 바 */}
       <Box
         position="fixed"
         bottom="0"

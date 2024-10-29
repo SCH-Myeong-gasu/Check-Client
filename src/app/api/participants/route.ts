@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     });
     
     return NextResponse.json({ success: true, participant }, { status: 201 });
-  } catch (error) {
+  } catch (error:any) {
     // 중복된 참가자 정보에 대한 처리
     if (error.code === 'P2002') {
       return NextResponse.json({ error: '이 참가자는 이미 등록되어 있습니다.' }, { status: 409 });

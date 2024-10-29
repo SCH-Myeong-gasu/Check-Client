@@ -56,7 +56,7 @@ export default function RegisterPage() {
       
       setSuccess('Registration successful');
       router.push('/login/auth');  // 회원가입 성공 후 로그인 페이지로 이동
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
   };

@@ -51,7 +51,7 @@ export default function LoginPage() {
       // router.push('/dashboard'); // 로그인 성공 후 대시보드로 이동
       // router.back();
       router.push('/');
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
   };
